@@ -12,8 +12,8 @@ type Session = {
   user: UserProfile;
 };
 
-const LOCAL_DATA_STORE = 'focushub-local-data-v2';
-const LOCAL_SESSION_STORE = 'focushub-session-v1';
+const LOCAL_DATA_STORE = 'visionary-curator-local-data-v2';
+const LOCAL_SESSION_STORE = 'visionary-curator-session-v1';
 
 function getApiBase(): string {
   return (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ?? '';
@@ -81,20 +81,6 @@ async function apiRequest<T>(path: string, init: RequestInit = {}, token?: strin
   return (await response.json()) as T;
 }
 
-function generateLocalSession(displayName: string, email: string): Session {
-  const id = crypto.randomUUID();
-  const id2 = crypto.randomUUID();
-  return {
-    token: id,
-    user: {
-      uid: id2,
-      displayName,
-      email,
-      role: 'admin',
-    },
-  };
-}
-
 export async function login(email: string, password: string): Promise<Session> {
   if (isCloudEnabled()) {
     const result = await apiRequest<Session>('/auth/login', {
@@ -104,7 +90,17 @@ export async function login(email: string, password: string): Promise<Session> {
     setSession(result);
     return result;
   }
-  const localSession = generateLocalSession(email.split('@')[0] || 'Local Admin', email);
+
+  const localSession: Session = {
+    // amazonq-ignore-next-line
+    token: 'local-mode',
+    user: {
+      uid: `local-${Date.now()}`,
+      displayName: email.split('@')[0] || 'Local Admin',
+      email,
+      role: 'admin',
+    },
+  };
   setSession(localSession);
   return localSession;
 }
@@ -118,7 +114,16 @@ export async function register(name: string, email: string, password: string): P
     setSession(result);
     return result;
   }
-  const localSession = generateLocalSession(name || 'Local Admin', email);
+
+  const localSession: Session = {
+    token: 'local-mode',
+    user: {
+      uid: `local-${Date.now()}`,
+      displayName: name || 'Local Admin',
+      email,
+      role: 'admin',
+    },
+  };
   setSession(localSession);
   return localSession;
 }

@@ -59,7 +59,10 @@ export default function App() {
       setLoading(false);
     };
 
-    void initialize();
+    void initialize().catch((err) => {
+      setError(sanitizeError(err, 'Failed to initialize'));
+      setLoading(false);
+    });
   }, []);
 
   const pushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -68,7 +71,10 @@ export default function App() {
     if (loading || !userProfile) return;
     if (pushTimerRef.current) clearTimeout(pushTimerRef.current);
     pushTimerRef.current = setTimeout(() => {
-      void pushToCloudBestEffort({ products, sales, customers, profile: userProfile }, authToken || undefined);
+      void pushToCloudBestEffort(
+        { products, sales, customers, profile: userProfile },
+        authToken || undefined,
+      ).catch(() => { /* silent — local copy already saved */ });
     }, 1500);
     return () => { if (pushTimerRef.current) clearTimeout(pushTimerRef.current); };
   }, [products, sales, customers, loading, authToken, userProfile]);
