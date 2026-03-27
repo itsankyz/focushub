@@ -12,8 +12,20 @@ export default defineConfig(() => {
       },
     },
     server: {
-      // Keep hot reload configurable in local development.
       hmr: process.env.DISABLE_HMR !== 'true',
+    },
+    build: {
+      chunkSizeWarningLimit: 1600,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-charts': ['recharts'],
+            'vendor-xlsx': ['xlsx'],
+            'vendor-ui': ['lucide-react', 'date-fns', 'clsx', 'tailwind-merge'],
+          },
+        },
+      },
     },
   };
 });
