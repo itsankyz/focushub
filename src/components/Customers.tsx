@@ -261,6 +261,32 @@ export default function Customers({ customers, sales, onAddCustomer }: Customers
                   <Mail className="w-4 h-4" />
                   <span className="text-sm font-medium truncate">{customer.email || 'No email'}</span>
                 </div>
+                {customer.latestPrescription && (
+                  <div className="p-3 bg-[#f7f9fb] rounded-2xl">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-2">Latest Rx</p>
+                    <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-[#2c3437]">
+                      <span>OD: {customer.latestPrescription.od.sph}/{customer.latestPrescription.od.cyl}</span>
+                      <span>OS: {customer.latestPrescription.os.sph}/{customer.latestPrescription.os.cyl}</span>
+                    </div>
+                  </div>
+                )}
+                {(customer.latestFrameName || customer.latestLensName) && (
+                  <div className="p-3 bg-[#f7f9fb] rounded-2xl space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">Latest Order</p>
+                    {customer.latestFrameName && (
+                      <div className="flex justify-between text-[10px]">
+                        <span className="text-gray-400">Frame</span>
+                        <span className="font-bold text-[#2c3437]">{customer.latestFrameName} {customer.latestFrameCost ? `₹${customer.latestFrameCost}` : ''}</span>
+                      </div>
+                    )}
+                    {customer.latestLensName && (
+                      <div className="flex justify-between text-[10px]">
+                        <span className="text-gray-400">Lens</span>
+                        <span className="font-bold text-[#2c3437]">{customer.latestLensName} {customer.latestLensCost ? `₹${customer.latestLensCost}` : ''}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between pt-6 border-t border-gray-50">
@@ -269,8 +295,8 @@ export default function Customers({ customers, sales, onAddCustomer }: Customers
                   <p className="text-sm font-black text-[#3856c4]">₹{customer.totalSpent}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-1">Last Visit</p>
-                  <p className="text-sm font-bold text-[#2c3437]">{customer.lastVisit ? format(customer.lastVisit, 'MMM d, yyyy') : 'Never'}</p>
+                  <p className="text-[10px] text-gray-300 font-black uppercase tracking-widest mb-1">Last Order</p>
+                  <p className="text-sm font-black text-[#2c3437]">{customer.latestOrderTotal ? `₹${customer.latestOrderTotal}` : '—'}</p>
                 </div>
               </div>
             </div>
@@ -345,15 +371,49 @@ export default function Customers({ customers, sales, onAddCustomer }: Customers
                   <h4 className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-6">Financial Overview</h4>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold opacity-80">Total Revenue</span>
+                      <span className="text-xs font-bold opacity-80">Total Spent</span>
                       <span className="text-xl font-black">₹{selectedCustomer.totalSpent}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold opacity-80">Last Visit</span>
                       <span className="text-sm font-bold">{selectedCustomer.lastVisit ? format(selectedCustomer.lastVisit, 'MMM d, yyyy') : 'N/A'}</span>
                     </div>
+                    {selectedCustomer.latestOrderTotal && (
+                      <div className="flex items-center justify-between border-t border-white/20 pt-4">
+                        <span className="text-xs font-bold opacity-80">Last Order Total</span>
+                        <span className="text-lg font-black">₹{selectedCustomer.latestOrderTotal}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {(selectedCustomer.latestFrameName || selectedCustomer.latestLensName) && (
+                  <div className="bg-[#f7f9fb] rounded-[2rem] p-6 space-y-4">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Latest Frame & Lens</h4>
+                    {selectedCustomer.latestFrameName && (
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Frame</p>
+                          <p className="text-sm font-bold text-[#2c3437]">{selectedCustomer.latestFrameName}</p>
+                        </div>
+                        {selectedCustomer.latestFrameCost && (
+                          <span className="text-sm font-black text-[#3856c4]">₹{selectedCustomer.latestFrameCost}</span>
+                        )}
+                      </div>
+                    )}
+                    {selectedCustomer.latestLensName && (
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Lens</p>
+                          <p className="text-sm font-bold text-[#2c3437]">{selectedCustomer.latestLensName}</p>
+                        </div>
+                        {selectedCustomer.latestLensCost && (
+                          <span className="text-sm font-black text-[#3856c4]">₹{selectedCustomer.latestLensCost}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Middle & Right Column: Rx and History */}

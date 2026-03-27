@@ -54,6 +54,8 @@ export default function Sales({ customers, products, userProfile, onAddSale, onA
   const [discountValue, setDiscountValue] = useState(0);
   const [discountType, setDiscountType] = useState<'amount' | 'percentage'>('amount');
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'transfer'>('cash');
+  const [manualFrame, setManualFrame] = useState({ name: '', cost: '' });
+  const [manualLens, setManualLens] = useState({ name: '', cost: '' });
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
   const tax = subtotal * 0.18; // 18% GST
@@ -116,8 +118,10 @@ export default function Sales({ customers, products, userProfile, onAddSale, onA
         paymentMethod,
         status: 'pending',
         prescription,
-        lensType: 'Single Vision',
-        frameSelection: items.find(i => i.product.category === 'frames')?.product.name || '',
+        lensType: manualLens.name || items.find(i => i.product.category === 'lenses')?.product.name || '',
+        frameSelection: manualFrame.name || items.find(i => i.product.category === 'frames')?.product.name || '',
+        manualFrameCost: manualFrame.cost ? Number(manualFrame.cost) : undefined,
+        manualLensCost: manualLens.cost ? Number(manualLens.cost) : undefined,
         userId: userProfile?.uid || 'unknown'
       });
 
@@ -132,6 +136,8 @@ export default function Sales({ customers, products, userProfile, onAddSale, onA
       setPaymentMethod('cash');
       setCustomerSearch('');
       setProductSearch('');
+      setManualFrame({ name: '', cost: '' });
+      setManualLens({ name: '', cost: '' });
       setStepError(null);
     } finally {
       setSubmitting(false);
@@ -381,6 +387,48 @@ export default function Sales({ customers, products, userProfile, onAddSale, onA
             <div className="mb-10">
               <h3 className="text-2xl font-black text-[#2c3437]">Frame & Lens Selection</h3>
               <p className="text-gray-400 text-sm">Curate the perfect look for your client.</p>
+            </div>
+
+            {/* Manual Frame & Lens Entry */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 p-6 bg-[#f7f9fb] rounded-[2rem]">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Frame Name</label>
+                <input
+                  className="w-full bg-white border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-[#3856c4]/20 transition-all"
+                  placeholder="e.g. Ray-Ban Aviator"
+                  value={manualFrame.name}
+                  onChange={e => setManualFrame({ ...manualFrame, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Frame Cost (₹)</label>
+                <input
+                  type="number"
+                  className="w-full bg-white border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-[#3856c4]/20 transition-all"
+                  placeholder="0"
+                  value={manualFrame.cost}
+                  onChange={e => setManualFrame({ ...manualFrame, cost: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Lens Name</label>
+                <input
+                  className="w-full bg-white border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-[#3856c4]/20 transition-all"
+                  placeholder="e.g. Zeiss Single Vision"
+                  value={manualLens.name}
+                  onChange={e => setManualLens({ ...manualLens, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Lens Cost (₹)</label>
+                <input
+                  type="number"
+                  className="w-full bg-white border-none rounded-2xl py-4 px-5 text-sm focus:ring-2 focus:ring-[#3856c4]/20 transition-all"
+                  placeholder="0"
+                  value={manualLens.cost}
+                  onChange={e => setManualLens({ ...manualLens, cost: e.target.value })}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

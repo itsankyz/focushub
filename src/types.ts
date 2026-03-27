@@ -44,6 +44,8 @@ export interface Sale {
   prescription?: Prescription;
   frameSelection?: string;
   lensType?: string;
+  manualFrameCost?: number;
+  manualLensCost?: number;
   createdAt: number;
   userId: string;
   status: 'pending' | 'paid' | 'confirmed' | 'ready_for_pickup';
