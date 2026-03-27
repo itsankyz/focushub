@@ -1,0 +1,5 @@
+{
+  "name": "FocusHub",
+  "description": "Premium optical store management system for prescriptions, inventory, and customer registry.",
+  "requestFramePermissions": ["camera"]
+}
